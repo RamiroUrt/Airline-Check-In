@@ -4,8 +4,16 @@ import testRouter from "./routes/test/test.js";
 import cors from 'cors';
 
 const app = express();
-app.use(cors());
 
+app.get("/", (req, res) => {
+  res.status(200).json({ 
+    status: "OK", 
+    message: "BSale Airline API is running",
+    timestamp: new Date().toISOString()
+  });
+});
+
+app.use(cors());
 app.use(express.json());
 app.use("/flights", flightsRouter);
 
@@ -19,12 +27,5 @@ app.get("/health", (req, res) => {
   });
 });
 
-app.get("/", (req, res) => {
-  res.status(200).json({ 
-    status: "OK", 
-    message: "BSale Airline API is running",
-    timestamp: new Date().toISOString()
-  });
-});
 
 export default app;
