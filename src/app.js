@@ -11,4 +11,12 @@ app.use("/flights", flightsRouter);
 
 app.use("/test", testRouter);
 
+//endpoint para Raleway Health Check
+app.get("/health", (req, res) => {
+  res.status(200).json({ 
+    status: "OK", 
+    timestamp: new Date().toISOString() 
+  });
+});
+
 export default app;
