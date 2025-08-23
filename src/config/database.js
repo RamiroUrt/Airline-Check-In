@@ -3,13 +3,12 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-// Opción 1: Usar MYSQL_URL (Recomendado para Railway)
-if (process.env.MYSQL_URL) {
-  var pool = mysql.createPool(process.env.MYSQL_URL);
-} 
-// Opción 2: Usar variables individuales (Para desarrollo local)
-else {
-  var pool = mysql.createPool({
+let pool;
+let reconnectAttempts = 0;
+const MAX_RECONNECT_ATTEMPTS = 5;
+
+function createPool() {
+  return mysql.createPool({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
     password: process.env.DB_PASS,
@@ -17,31 +16,34 @@ else {
     port: process.env.DB_PORT || 3306,
     waitForConnections: true,
     connectionLimit: 10,
-    queueLimit: 0
+    queueLimit: 0,
+    connectTimeout: 60000,
+    acquireTimeout: 60000,
+    timeout: 60000,
+    // ✅ IMPORTANTE: Habilitar reconexión
+    enableKeepAlive: true,
+    keepAliveInitialDelay: 10000
   });
 }
 
-// Manejador de eventos para debugging
-pool.on('connection', (connection) => {
-  console.log('Nueva conexión establecida a la BD');
-});
+// Crear pool inicial
+pool = createPool();
 
-pool.on('acquire', (connection) => {
-  console.log('Conexión adquirida', connection.threadId);
-});
-
-pool.on('release', (connection) => {
-  console.log('Conexión liberada', connection.threadId);
-});
-
-pool.on('error', (err) => {
-  console.error('Error en el pool de la BD:', err);
-});
-
-console.log('🔌 Database pool created successfully');
-console.log('📊 Database config:', {
-  hasMysqlUrl: !!process.env.MYSQL_URL,
-  host: process.env.DB_HOST || 'localhost (fallback)'
+// Manejador de reconexión
+pool.on('error', async (err) => {
+  console.error('Database error:', err);
+  
+  if (err.code === 'PROTOCOL_CONNECTION_LOST' && reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+    reconnectAttempts++;
+    console.log(`Attempting reconnect #${reconnectAttempts}`);
+    
+    try {
+      pool = createPool();
+      console.log('Reconnected to database');
+    } catch (reconnectError) {
+      console.error('Reconnect failed:', reconnectError);
+    }
+  }
 });
 
 export default pool;
