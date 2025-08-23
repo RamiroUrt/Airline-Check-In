@@ -30,7 +30,7 @@ Proyecto desarrollado como parte del desafío técnico de **Bsale**.
 
 1. **Clonar el repositorio**
 ```bash
-git clone <URL_REPO_PRIVADO>
+git clone https://github.com/RamiroUrt/Airline-Check-In.git
 cd airline-checkin-api
 ```
 
