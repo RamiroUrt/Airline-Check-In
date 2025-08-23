@@ -2,16 +2,6 @@
 
 API REST para gestionar vuelos, pasajeros y la **asignación automática de asientos**.  
 Proyecto desarrollado como parte del desafío técnico de **Bsale**.
-
----
-
-## 👨‍💻 Autor
-- **Nombre:** Ramiro Urteaga
-- **Nivel:** Desarrollador JR
-- **Stack:** Node.js | Express | MySQL
-
----
-
 ## 🚀 Tecnologías usadas
 - [Node.js](https://nodejs.org/)
 - [Express](https://expressjs.com/)
