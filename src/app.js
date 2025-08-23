@@ -28,6 +28,12 @@ app.use("/flights", flightsRouter);
 
 app.use("/test", testRouter);
 
-
+app.use("*", (req, res) => {
+  res.status(404).json({ 
+    code: 404, 
+    error: "Ruta no encontrada",
+    available_routes: ["/", "/flights/:id", "/flights/:id/passengers"]
+  });
+});
 
 export default app;
