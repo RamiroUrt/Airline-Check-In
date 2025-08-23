@@ -38,4 +38,10 @@ pool.on('error', (err) => {
   console.error('Error en el pool de la BD:', err);
 });
 
+console.log('🔌 Database pool created successfully');
+console.log('📊 Database config:', {
+  hasMysqlUrl: !!process.env.MYSQL_URL,
+  host: process.env.DB_HOST || 'localhost (fallback)'
+});
+
 export default pool;
