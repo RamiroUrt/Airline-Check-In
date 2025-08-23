@@ -3,15 +3,39 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const pool = mysql.createPool({ //Creamos un pool de conexiones MySQL
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASS,
-  database: process.env.DB_NAME,
-  port: process.env.DB_PORT || 3306,
-  waitForConnections: true, //Hace que si todas las conexiones del pool están ocupadas
-  connectionLimit: 10, //cuantas conexiones máximas puede tener abiertas al mismo tiempo
-  queueLimit: 0
+// Opción 1: Usar MYSQL_URL (Recomendado para Railway)
+if (process.env.MYSQL_URL) {
+  var pool = mysql.createPool(process.env.MYSQL_URL);
+} 
+// Opción 2: Usar variables individuales (Para desarrollo local)
+else {
+  var pool = mysql.createPool({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: process.env.DB_NAME,
+    port: process.env.DB_PORT || 3306,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
+  });
+}
+
+// Manejador de eventos para debugging
+pool.on('connection', (connection) => {
+  console.log('Nueva conexión establecida a la BD');
+});
+
+pool.on('acquire', (connection) => {
+  console.log('Conexión adquirida', connection.threadId);
+});
+
+pool.on('release', (connection) => {
+  console.log('Conexión liberada', connection.threadId);
+});
+
+pool.on('error', (err) => {
+  console.error('Error en el pool de la BD:', err);
 });
 
 export default pool;
