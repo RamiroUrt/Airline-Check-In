@@ -4,6 +4,8 @@ import testRouter from "./routes/test/test.js";
 import cors from 'cors';
 
 const app = express();
+app.use(cors());
+app.use(express.json());
 
 app.get("/", (req, res) => {
   res.status(200).json({ 
@@ -12,13 +14,6 @@ app.get("/", (req, res) => {
     timestamp: new Date().toISOString()
   });
 });
-
-app.use(cors());
-app.use(express.json());
-app.use("/flights", flightsRouter);
-
-app.use("/test", testRouter);
-
 //endpoint para Raleway Health Check
 app.get("/health", (req, res) => {
   res.status(200).json({ 
@@ -26,6 +21,11 @@ app.get("/health", (req, res) => {
     timestamp: new Date().toISOString() 
   });
 });
+
+app.use("/flights", flightsRouter);
+
+app.use("/test", testRouter);
+
 
 
 export default app;
