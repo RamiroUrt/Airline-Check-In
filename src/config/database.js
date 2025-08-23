@@ -20,7 +20,6 @@ function createPool() {
     connectTimeout: 60000,
     acquireTimeout: 60000,
     timeout: 60000,
-    // ✅ IMPORTANTE: Habilitar reconexión
     enableKeepAlive: true,
     keepAliveInitialDelay: 10000
   });
@@ -47,3 +46,8 @@ pool.on('error', async (err) => {
 });
 
 export default pool;
+
+
+const connection = await mysql.createConnection(process.env.DATABASE_URL);
+
+export default connection;
